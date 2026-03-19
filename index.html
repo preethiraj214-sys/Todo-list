@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Todo List</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#f3e8ff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.container{
+  background:white;
+  padding:20px;
+  width:350px;
+  border-radius:10px;
+  box-shadow:0 0 10px gray;
+}
+
+input,select,button{
+  width:100%;
+  padding:8px;
+  margin:5px 0;
+}
+
+button{
+  background:purple;
+  color:white;
+  border:none;
+}
+
+.progress{
+  width:100%;
+  height:10px;
+  background:#ddd;
+  margin-bottom:10px;
+}
+
+.bar{
+  height:10px;
+  background:purple;
+  width:0%;
+}
+
+li{
+  list-style:none;
+  padding:8px;
+  margin:5px 0;
+  box-shadow:0 0 5px gray;
+  display:flex;
+  justify-content:space-between;
+}
+
+.red{color:red;font-weight:bold;}
+.high{background:red;color:white;padding:2px 5px;}
+.medium{background:orange;color:white;padding:2px 5px;}
+.low{background:green;color:white;padding:2px 5px;}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+<h2>Todo List</h2>
+
+<div class="progress">
+<div id="bar" class="bar"></div>
+</div>
+
+<input id="task" placeholder="Task">
+<select id="priority">
+<option>High</option>
+<option>Medium</option>
+<option>Low</option>
+</select>
+
+<input type="date" id="date">
+
+<button onclick="addTask()">Add</button>
+
+<p id="pending">Pending:0</p>
+<p id="completed">Completed:0</p>
+
+<ul id="list"></ul>
+</div>
+
+<script>
+let todos=[];
+
+function show(){
+list.innerHTML="";
+let done=0;
+let today=new Date().toISOString().split("T")[0];
+
+todos.forEach((t,i)=>{
+if(t.done) done++;
+
+let color=t.priority.toLowerCase();
+let overdue=(!t.done && t.date<today)?"red":"";
+
+if(!t.done && t.date==today){
+alert("Reminder: "+t.text);
+}
+
+list.innerHTML+=`
+<li>
+<div>
+<input type="checkbox" onchange="toggle(${i})" ${t.done?"checked":""}>
+<span class="${t.done?'':overdue}">
+${t.text} (${t.date})
+</span>
+</div>
+<div>
+<span class="${color}">${t.priority}</span>
+<button onclick="del(${i})">✖</button>
+</div>
+</li>`;
+});
+
+pending.innerText="Pending:"+(todos.length-done);
+completed.innerText="Completed:"+done;
+bar.style.width=todos.length?(done/todos.length*100)+"%":"0%";
+}
+
+function addTask(){
+todos.push({
+text:task.value,
+priority:priority.value,
+date:date.value,
+done:false
+});
+task.value="";
+date.value="";
+show();
+}
+
+function toggle(i){
+todos[i].done=!todos[i].done;
+show();
+}
+
+function del(i){
+todos.splice(i,1);
+show();
+}
+</script>
+
+</body>
+</html>
